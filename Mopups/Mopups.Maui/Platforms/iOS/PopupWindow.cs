@@ -1,5 +1,5 @@
 ﻿using CoreGraphics;
-
+using Foundation;
 using Mopups.Pages;
 
 using UIKit;
@@ -21,29 +21,51 @@ namespace Mopups.Platforms.iOS
         {
 
         }
-
-        public override UIView HitTest(CGPoint point, UIEvent? uievent)
+        public override void TouchesEnded(NSSet touches, UIEvent? evt)
         {
+            base.TouchesEnded(touches, evt);
             var platformHandler = (PopupPageRenderer?)RootViewController;
-            var renderer = platformHandler?.Handler;
-            var hitTestResult = base.HitTest(point, uievent);
+            //var renderer = platformHandler?.Handler;
+            //var hitTestResult = base.HitTest(point, uievent);
 
             if (!(platformHandler?.Handler?.VirtualView is PopupPage formsElement))
-                return hitTestResult;
+                return;
 
             if (formsElement.InputTransparent)
-                return null!;
+                return;
 
-            if ((formsElement.BackgroundInputTransparent || formsElement.CloseWhenBackgroundIsClicked ) && renderer?.PlatformView == hitTestResult)
+            if ((formsElement.BackgroundInputTransparent || formsElement.CloseWhenBackgroundIsClicked))// && renderer?.PlatformView == hitTestResult)
             {
                 formsElement.SendBackgroundClick();
                 if (formsElement.BackgroundInputTransparent)
                 {
-                    return null!; //fires off other handlers? If hit test returns null, it seems that other elements will process the click instead
+                    return; //fires off other handlers? If hit test returns null, it seems that other elements will process the click instead
                 }
             }
-            return hitTestResult;
-                
+            return;
         }
+        //public override UIView HitTest(CGPoint point, UIEvent? uievent)
+        //{
+        //    var platformHandler = (PopupPageRenderer?)RootViewController;
+        //    var renderer = platformHandler?.Handler;
+        //    var hitTestResult = base.HitTest(point, uievent);
+
+        //    if (!(platformHandler?.Handler?.VirtualView is PopupPage formsElement))
+        //        return hitTestResult;
+
+        //    if (formsElement.InputTransparent)
+        //        return null!;
+
+        //    if ((formsElement.BackgroundInputTransparent || formsElement.CloseWhenBackgroundIsClicked ) && renderer?.PlatformView == hitTestResult)
+        //    {
+        //        formsElement.SendBackgroundClick();
+        //        if (formsElement.BackgroundInputTransparent)
+        //        {
+        //            return null!; //fires off other handlers? If hit test returns null, it seems that other elements will process the click instead
+        //        }
+        //    }
+        //    return hitTestResult;
+                
+        //}
     }
 }
